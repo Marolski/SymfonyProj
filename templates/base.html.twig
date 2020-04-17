@@ -6,7 +6,9 @@
         {% block stylesheets %}{% endblock %}
     </head>
     <body>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
+        <form action="{{ path('create_product')}}" >
+            <input type="text" name="name"/>
+            <input type="submit" value="submit" />
+        </form>
     </body>
 </html>
