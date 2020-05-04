@@ -10,13 +10,14 @@ use Doctrine\ORM\Mapping as ORM;
 class Products
 {
     public function __construct(){
-        $this->$price= 2.99;
-        $this->$count = 20;
-        $this->$soldOut = true;
-        $this->$Description = "super product";
-        $this->$Discount = true;
-        $this->$ProcentDiscount = 0.25;
-        $this->$NeedProduct = true;
+        $this->name = "Cofee"; 
+        $this->price= 2.99;
+        $this->count = 20;
+        $this->soldOut = true;
+        $this->Description = "super product";
+        $this->Discount = true;
+        $this->ProcentDiscount = 0.25;
+        $this->NeedProduct = true;
     }
     /**
      * @ORM\Id()

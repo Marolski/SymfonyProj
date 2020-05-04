@@ -13,23 +13,50 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 class ProductsController extends AbstractController
 {
     /**
-    * @Route("/product", name="create_product")
+    * @Route("/", name="product_list")
+    * @Method({"GET"})
     */
-    public function createProduct(Request $request): Response
-    {
-        // you can fetch the EntityManager via $this->getDoctrine()
-        // or you can add an argument to the action: createProduct(EntityManagerInterface $entityManager)
-        $entityManager = $this->getDoctrine()->getManager();
+    public function index() {
+        // return new Response('<html><body>Hello</body><html>');
 
-        $product = new Product();
-        $product->setName($request->get('name'));
+        $products = $this->getDoctrine()->getRepository(Product::class)->findAll();
 
-        // tell Doctrine you want to (eventually) save the Product (no queries yet)
-        $entityManager->persist($product);
-
-        // actually executes the queries (i.e. the INSERT query)
-        $entityManager->flush();
-
-        return new Response('Saved new product with id '.$product->getId());
+        return $this->render('products/index.html.twig', array(
+            'products' => $products
+        ));
     }
+    /**
+    * @Route("/product/new", name="new_product")
+    * @Method({"GET", "POST"})
+    */
+    public function new(Request $request) {
+            $product = new Product();
+
+            $form = $this->createFormBuilder($product)
+            ->add('name', TextType::class, array('attr' => array('class' => 'form-control')))
+            ->add('price', TextType::class, array('attr' => array('class' => 'form-control')))
+            ->add('count', TextType::class, array('attr' => array('class' => 'form-control')))
+            ->add('description', TextareaType::class, array('attr' => array('class' => 'form-control')))
+            ->add('ProcentDiscount', TextType::class, array('attr' => array('class' => 'form-control')))
+            ->add('soldOut', CheckboxType::class, array('required' => false,'attr' => array('class' => 'custom-control custom-checkbox')))
+            ->add('Discount', CheckboxType::class, array('required' => false,'attr' => array('class' => 'custom-control custom-checkbox')))
+            ->add('NeedProduct', CheckboxType::class, array('required' => false,'attr' => array('class' => 'custom-control custom-checkbox')))
+            ->add('save', SubmitType::class, array('label' => 'Create', 'attr' => array('class' => 'form-control')))->getForm();
+
+            $form->handleRequest($request);
+
+            if($form->isSubmitted() && $form->isValid()) {
+                $product = $form->getData();
+
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($product);
+                $entityManager->flush();
+
+                return $this->redirectToRoute('product_list');
+            }
+
+            return $this->render('/products/new.html.twig', array(
+                'form' => $form->createView()
+            ));
+        }
 }
